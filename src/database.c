@@ -1,5 +1,5 @@
 /*********************************************************************************************
-	> File Name: database.h
+	> File Name: database.c
 	> Author: 
 	> Mail: 
 	> Created Time: 2017年05月23日 星期二 10时29分03秒
@@ -7,24 +7,8 @@
                可以声明一个****结构体数组****,用来保存选修同一课程的学生.在后期方案中被放弃.
  ********************************************************************************************/
 
-#ifndef _DATABASE_H
-#define _DATABASE_H
-
 //头文件
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "student.h"
-#include "subject.h"
-//宏定义
-
-
-//声明数据库信息结构体
-typedef struct {
-                int ID;                     //数据的ID,为整数
-                SUBJECT subject;            //保存课程信息的结构体
-                STUDENT student;            //保存选课的学生信息结构体
-} DATABASE;
+#include "database.h"
 
 /*****************************************************************
  * 将学生选课信息从二进制文件中读取并且显示
@@ -33,7 +17,6 @@ typedef struct {
  *
  * ****使用函数之前需要创建文件,否则可能无法正常工作****
 ******************************************************************/
-
 void show_database_info(void)
 {
     FILE * database_b_file;             //二进制文件指针
@@ -59,6 +42,7 @@ void show_database_info(void)
     if ( fclose(database_b_file) == EOF)
         fprintf(stderr, "Error closing file \"database.dat\".\n");
 }
+
 
 /******************************************************************************************
  *从二进制文件中读取学生信息并且保存到文本文件中以便查阅
@@ -93,5 +77,3 @@ void save_database_txt(void)
     if (fclose(database_t_file) == EOF)
         fprintf(stderr, "Error closing file \"database.txt\".\n");
 }
-
-#endif

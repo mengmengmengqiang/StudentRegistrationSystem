@@ -28,7 +28,7 @@ typedef struct {
                 int  CREDIT;                      //学分
                 int  START;                       //开科学期
                 int  SELECTED;                    //课程已选人数
-                int  MAX_SELECTED = 100;          //初始最大课程容量
+                int  MAX_SELECTED;                //初始最大课程容量,需要赋值
 } SUBJECT;
 
 /***************************************************************************
@@ -68,6 +68,7 @@ void show_subject_info(void)
     if (fclose(subject_file) == EOF)
         fprintf(stderr, "Error closing file \"subject.dat\".\n");
 }
+
 
 /******************************************************************
  *保存课程信息到文本文件以便查阅
@@ -109,5 +110,4 @@ void save_subject_txt(void)
     if (fclose(subject_t_file) == EOF) //尝试关闭文本文件
         fprintf(stderr, "Error closing file \"subject.txt\".\n");
 }
-
 #endif

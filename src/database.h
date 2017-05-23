@@ -18,7 +18,6 @@
 #include "subject.h"
 //宏定义
 
-
 //声明数据库信息结构体
 typedef struct {
                 int ID;                     //数据的ID,为整数
@@ -33,65 +32,12 @@ typedef struct {
  *
  * ****使用函数之前需要创建文件,否则可能无法正常工作****
 ******************************************************************/
+void show_database_info(void);
 
-void show_database_info(void)
-{
-    FILE * database_b_file;             //二进制文件指针
-    DATABASE * database;                //声明一个指向数据库结构体的指针 
-
-    if ( (database_b_file = fopen("database.dat", "rb")) == NULL)
-    {
-        fprintf(stderr, "Can't open file \"database.dat\", maybe you have not created it.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    rewind(database_b_file);              //定位到二进制文件开始
-    while ( fread(database, sizeof(DATABASE), 1, database_b_file) == 1)
-        fprintf(stdout, "信息ID:%d 课程ID:%s 课程名称:%s 学生ID:%s 学生姓名:%s\n",
-                                                                                  database -> ID,
-                                                                                  database -> subject.ID,
-                                                                                  database -> subject.NAME,
-                                                                                  database -> student.ID,
-                                                                                  database -> student.NAME
-                                                                                );
-
-    //尝试关闭文件如果无法正常关闭则报错
-    if ( fclose(database_b_file) == EOF)
-        fprintf(stderr, "Error closing file \"database.dat\".\n");
-}
 
 /******************************************************************************************
  *从二进制文件中读取学生信息并且保存到文本文件中以便查阅
 *******************************************************************************************/
-void save_database_txt(void)
-{
-    FILE * database_b_file;             //二进制文件指针
-    FILE * database_t_file;             //文本文件指针
-    DATABASE * database;                //声明一个指向数据库结构体的指针 
-
-    //尝试以只读二进制模式
-    if ( (database_b_file = fopen("database.dat", "rb")) == NULL)
-    {
-        fprintf(stderr, "Can't open file \"database.dat\", maybe you have not created it.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    rewind(database_b_file);              //定位到二进制文件起始
-    while ( fread(database, sizeof(DATABASE), 1, database_b_file) == 1)
-        fprintf(database_t_file, "信息ID:%d 课程ID:%s 课程名称:%s 学生ID:%s 学生姓名:%s\n",
-                                                                                  database -> ID,
-                                                                                  database -> subject.ID,
-                                                                                  database -> subject.NAME,
-                                                                                  database -> student.ID,
-                                                                                  database -> student.NAME
-                                                                                );
-
-    //尝试关闭二进制文件如果无法正常关闭则报错
-    if (fclose(database_b_file) == EOF)
-        fprintf(stderr, "Error closing file \"database.dat\".\n");
-    //尝试关闭文本文件如果无法正常关闭则报错
-    if (fclose(database_t_file) == EOF)
-        fprintf(stderr, "Error closing file \"database.txt\".\n");
-}
+void save_database_txt(void);
 
 #endif

@@ -39,7 +39,6 @@ typedef struct {
  *
  * ****使用函数之前需要创建文件否则可能无法工作****
 ****************************************************************************/
-
 void show_subject_info(void)
 {
     FILE * subject_file;
@@ -68,6 +67,7 @@ void show_subject_info(void)
     if (fclose(subject_file) == EOF)
         fprintf(stderr, "Error closing file \"subject.dat\".\n");
 }
+
 
 /******************************************************************
  *保存课程信息到文本文件以便查阅
@@ -109,5 +109,4 @@ void save_subject_txt(void)
     if (fclose(subject_t_file) == EOF) //尝试关闭文本文件
         fprintf(stderr, "Error closing file \"subject.txt\".\n");
 }
-
 #endif
