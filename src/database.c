@@ -190,7 +190,7 @@ void search_database_subject(const char * ID)   //搜索的文件名字符串指
             fprintf(stderr, "Error closing file \"%s\".\n", file_name);
     }
     else
-        fprintf(stdout, "subject has not be selected.\n");
+        fprintf(stdout, "subject \"%s\" has not be selected.\n", ID);
 
     free(file_name); //释放内存
 }
