@@ -14,14 +14,15 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "assert.h"
 
 //宏定义
-#define STUDENT_ID_LEN 10                   //学号长度
+#define STUDENT_ID_LEN 20                   //学号长度
 #define STUDENT_NAME_LEN 50                 //姓名长度
 #define STUDENT_SEX_LEN 10                  //性别长度
-#define STUDENT_MAJOR_LEN 50                //专业长度
+#define STUDENT_MAJOR_LEN 100                //专业长度
 #define STUDENT_CLASS_LEN 8                 //班级长度
-#define STUDENT_PTHONE_LEN 11               //联系方式长度
+#define STUDENT_PTHONE_LEN 20               //联系方式长度
 
 //声明学生信息结构体
 typedef struct {

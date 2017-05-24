@@ -9,9 +9,6 @@
 #ifndef _DATABASE_H
 #define _DATABASE_H
 //头文件
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
 #include "student.h"
 #include "subject.h"
 //宏定义

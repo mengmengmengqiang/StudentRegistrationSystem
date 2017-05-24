@@ -6,12 +6,36 @@
     > Features: test my API in header file.
  ************************************************************************/
 //添加头文件
-#include "student.h"
-#include "subject.h"
-#include "database.h"
+#include "header/database.h"
 
 int main(void)
 {
+    DATABASE database_current  = {
+                                    1,
+                                    {
+                                        "BS123456",
+                                        "形式与政策",
+                                        "必修",
+                                        48,
+                                        4,
+                                        2,
+                                        30,
+                                        100
+                                    },
+                                    {
+                                        "B16020514",
+                                        "任强",
+                                        "男",
+                                        21,
+                                        "电磁场与无线技术",
+                                        "B160205",
+                                        "15295518250"
+                                    }
+    };
+    
+    search_database(database_current.subject.ID);
+
+    return 0;
 
 }
 

@@ -13,6 +13,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "assert.h"
 
 //宏定义
 #define SUBJECT_ID_LEN  10             //课程代码长度

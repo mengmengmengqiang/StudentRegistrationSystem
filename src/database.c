@@ -8,7 +8,7 @@
  ********************************************************************************************/
 
 //头文件
-#include "database.h"
+#include "header/database.h"
 
 /*****************************************************************
  * 将学生选课信息从二进制文件中读取并且显示
@@ -129,7 +129,6 @@ void append_database(DATABASE * database_append) //待添加的课程信息结�
 
         //尝试写入database_append信息到二进制文件中
         if ( fwrite(database_append, sizeof(DATABASE), 1, database_b_file) != 1)
-        B
             fprintf(stderr, "Error writing database_append to file \"database.dat\".\n");
     }
 
@@ -145,8 +144,50 @@ void append_database(DATABASE * database_append) //待添加的课程信息结�
  * 通过给出的ID
  * 先从database里面查找学生数据
  * 如果找不到就从学生数据库和课程数据库里查找信息
- *******************************************************/
-void search_database(const char * ID)
+*******************************************************/
+void search_database(const char * ID)   //搜索的文件名字符串指针
 {
+    //将每一门的课程保存在文件里,文件名为课程的ID
+    //搜索文件的原理为在文件都可读的权限下,尝试打开,
+    //如果无法打开则搜索不到文件,
+    //如果搜索到文件名则输出文件结构体中的信息
     
+    FILE * database_b_file;         //二进制文件指针
+    DATABASE * database_read;       //从二进制文件中读取的数据库结构体
+    char * file_name = (char *)malloc( (SUBJECT_ID_LEN + 5) * sizeof(char) ); //申请内存,存储用于搜索的文件名
+
+    //将课程ID复制到file_name指向的地址空间里同时申请内存
+    //返回值为指向file_name的二级指针(不使用)
+    strcpy(file_name, ID);
+    //将".dat"文件后缀复制到file_name指向的地址空间后面,并且覆盖原有的\0结束符
+    strcat(file_name, ".dat");
+    
+    //测试输出搜索的文件名
+    fprintf(stderr, "filename: \"%s\"\n", file_name);
+
+    //搜索文件是否存在
+    //如果搜索到则从第一个结构体里读取出选课信息结构体,
+    //然后输出课程信息结构体的基本信息,
+    //********(如果可能的话,还可以从最后一个结构体读出课程当前的已选容量)
+    if ( (database_b_file = fopen(file_name, "rb")) != NULL) //如果文件打开成功
+    {
+        if ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
+            fprintf(stdout, "课程代码:%s 课程名称:%s 课程性质:%s 总学时:%d 学分:%d 开课学期:%d 课程最大容量:%d\n",
+                                                                                                                  (database_read -> subject).ID,
+                                                                                                                  (database_read -> subject).NAME,
+                                                                                                                  (database_read -> subject).NATURE,
+                                                                                                                  (database_read -> subject).PERIOD,
+                                                                                                                  (database_read -> subject).CREDIT,
+                                                                                                                  (database_read -> subject).START,
+                                                                                                                  (database_read -> subject).MAX_SELECTED
+                                                                                                                  );
+        else
+            fprintf(stderr, "Error, file \"%s\" don't contain subject information.\n", file_name);
+        if ( fclose(database_b_file) == EOF )
+            fprintf(stderr, "Error closing file \"%s\".\n", file_name);
+    }
+    else
+        fprintf(stdout, "Sorry, can't find subject \"%s\".\n", ID);
+
+    free(file_name); //释放内存
 }

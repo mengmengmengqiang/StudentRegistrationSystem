@@ -7,9 +7,7 @@
  ************************************************************************/
 
 //添加模块头文件
-#include "student.h"
-#include "subject.h"
-#include "database.h"
+#include "header/database.h"
 
 //主函数
 int main(void)
