@@ -129,11 +129,24 @@ void append_database(DATABASE * database_append) //待添加的课程信息结�
 
         //尝试写入database_append信息到二进制文件中
         if ( fwrite(database_append, sizeof(DATABASE), 1, database_b_file) != 1)
-            fprintf(stderr, "Error writing database_append to file \"database.dat\".");
+        B
+            fprintf(stderr, "Error writing database_append to file \"database.dat\".\n");
     }
 
 
     //尝试关闭二进制文件
     if (fclose(database_b_file) == EOF)
         fprintf(stderr, "Error closing file \"database.dat\"\n");
+}
+
+
+/*******************************************************
+ * 查询选课信息
+ * 通过给出的ID
+ * 先从database里面查找学生数据
+ * 如果找不到就从学生数据库和课程数据库里查找信息
+ *******************************************************/
+void search_database(const char * ID)
+{
+    
 }
