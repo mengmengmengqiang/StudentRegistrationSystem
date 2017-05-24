@@ -45,5 +45,5 @@ void append_database(DATABASE * database_append); //待添加的选课信息结�
  * 先从database里面查找学生数据
  * 如果找不到就从学生数据库和课程数据库里查找信息
  *******************************************************/
-void search_database(const char * ID);
+void search_database_subject(const char * ID);
 #endif

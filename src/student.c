@@ -142,3 +142,43 @@ void append_student(STUDENT * student_append) //待添加的学生信息结构�
     if (fclose(student_b_file) == EOF)
         fprintf(stderr, "Error closing file \"student.dat\"\n");
 }
+
+
+/*******************************************************************
+ * 查询学生信息
+ * 通过给出的学生ID
+ * 从student.dat里面查找学生数据
+ * 比较判断是否存在这个学生
+ * 若存在则将搜索权交给search_database_student()去搜索学生的课程信息
+********************************************************************/
+int search_student(const char * ID)   //搜索的学生ID字符串指针
+{   
+    FILE * student_b_file;         //二进制文件指针
+    STUDENT * student_read;        //从二进制文件中读取的学生信息结构体
+
+    //从student.dat二进制文件中读取学生信息结构体
+    if ( (student_b_file = fopen("student.dat", "rb")) != NULL) //如果文件打开成功
+    {
+        while ( fread(student_read, sizeof(STUDENT), 1, student_b_file) == 1)
+            if( 1 )                                             //比对学生ID,如果符合则输出学生信息退出程序
+                {
+                    fprintf(stdout, "学号:%s 姓名:%s 性别:%s 年龄:%d 专业:%s 班级:%s 联系方式:%s\n",
+                                                                                            student_read -> ID,
+                                                                                            student_read -> NAME,
+                                                                                            student_read -> SEX,
+                                                                                            student_read -> AGE,
+                                                                                            student_read -> MAJOR,
+                                                                                            student_read -> CLASS,
+                                                                                            student_read -> NUMBER
+                                                                                            );
+                    if ( fclose(student_b_file) == EOF )
+                        fprintf(stderr, "Error closing file \"student.dat\".\n");
+                    return 1;                       //函数返回值为1表示找到该学生
+                }
+    }
+    else
+        fprintf(stdout, "Sorry, can't find student \"%s\".\n", ID);
+    
+    return 0;               //函数返回值为0表示找不到该学生
+
+}

@@ -139,13 +139,11 @@ void append_database(DATABASE * database_append) //待添加的课程信息结�
 }
 
 
-/*******************************************************
- * 查询选课信息
- * 通过给出的ID
- * 先从database里面查找学生数据
- * 如果找不到就从学生数据库和课程数据库里查找信息
-*******************************************************/
-void search_database(const char * ID)   //搜索的文件名字符串指针
+/**************************************************************************
+ * 如果search_subject()找到了课程信息则\
+ * 打开相应课程二进制文件输出选课学生信息
+***************************************************************************/
+void search_database_subject(const char * ID)   //搜索的文件名字符串指针
 {
     //将每一门的课程保存在文件里,文件名为课程的ID
     //搜索文件的原理为在文件都可读的权限下,尝试打开,
@@ -155,7 +153,8 @@ void search_database(const char * ID)   //搜索的文件名字符串指针
     FILE * database_b_file;         //二进制文件指针
     DATABASE * database_read;       //从二进制文件中读取的数据库结构体
     char * file_name = (char *)malloc( (SUBJECT_ID_LEN + 5) * sizeof(char) ); //申请内存,存储用于搜索的文件名
-
+    int flag = 1;                   //判断文件里有没有选课信息结构体,即该课程有没有被学生选择,
+                                    //0为课程至少被选择一次,1为课程未被选择
     //将课程ID复制到file_name指向的地址空间里同时申请内存
     //返回值为指向file_name的二级指针(不使用)
     strcpy(file_name, ID);
@@ -171,23 +170,27 @@ void search_database(const char * ID)   //搜索的文件名字符串指针
     //********(如果可能的话,还可以从最后一个结构体读出课程当前的已选容量)
     if ( (database_b_file = fopen(file_name, "rb")) != NULL) //如果文件打开成功
     {
-        if ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
-            fprintf(stdout, "课程代码:%s 课程名称:%s 课程性质:%s 总学时:%d 学分:%d 开课学期:%d 课程最大容量:%d\n",
-                                                                                                                  (database_read -> subject).ID,
-                                                                                                                  (database_read -> subject).NAME,
-                                                                                                                  (database_read -> subject).NATURE,
-                                                                                                                  (database_read -> subject).PERIOD,
-                                                                                                                  (database_read -> subject).CREDIT,
-                                                                                                                  (database_read -> subject).START,
-                                                                                                                  (database_read -> subject).MAX_SELECTED
-                                                                                                                  );
-        else
-            fprintf(stderr, "Error, file \"%s\" don't contain subject information.\n", file_name);
+        while ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
+        {
+            flag = 0;   //标记课程被选择过
+            fprintf(stdout, "学号:%s 姓名:%s 性别:%s 年龄:%d 专业:%s 班级:%s 联系方式:%s\n",
+                                                                                            (database_read -> student).ID,
+                                                                                            (database_read -> student).NAME,
+                                                                                            (database_read -> student).SEX,
+                                                                                            (database_read -> student).AGE,
+                                                                                            (database_read -> student).MAJOR,
+                                                                                            (database_read -> student).CLASS,
+                                                                                            (database_read -> student).NUMBER
+                                                                                            );
+        }
+        if (flag == 1) //课程未被选择
+            fprintf(stdout, "subject has not be selected.\n");
+
         if ( fclose(database_b_file) == EOF )
             fprintf(stderr, "Error closing file \"%s\".\n", file_name);
     }
     else
-        fprintf(stdout, "Sorry, can't find subject \"%s\".\n", ID);
+        fprintf(stdout, "subject has not be selected.\n");
 
     free(file_name); //释放内存
 }

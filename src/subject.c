@@ -148,3 +148,43 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
     if (fclose(subject_b_file) == EOF)
         fprintf(stderr, "Error closing file \"subject.dat\"\n");
 }
+
+
+/*******************************************************************
+ * 查询课程信息
+ * 通过给出的课程ID
+ * 从subject.dat里面查找学生数据
+ * 比较判断是否存在这个课程
+ * 若存在则将搜索权交给search_database_subject()去搜索课程的选课情况信息
+********************************************************************/
+int search_subject(const char * ID)   //搜索的课程ID字符串指针
+{   
+    FILE * subject_b_file;         //二进制文件指针
+    SUBJECT * subject_read;        //从二进制文件中读取的课程信息结构体
+
+    //从student.dat二进制文件中读取课程信息结构体
+    if ( (subject_b_file = fopen("subject.dat", "rb")) != NULL) //如果文件打开成功
+    {
+        while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
+            if( 1 )                                             //比对课程ID,如果符合则输出课程信息退出程序
+                {
+                    fprintf(stdout, "课程代码:%s 课程名称:%s 课程性质:%s 总学时:%d 学分:%d 开课学期:%d 课程容量:%d\n",
+                                                                                            subject_read -> ID,
+                                                                                            subject_read -> NAME,
+                                                                                            subject_read -> NATURE,
+                                                                                            subject_read -> PERIOD,
+                                                                                            subject_read -> CREDIT,
+                                                                                            subject_read -> START,
+                                                                                            subject_read -> MAX_SELECTED
+                                                                                            );
+                    if ( fclose(subject_b_file) == EOF )
+                        fprintf(stderr, "Error closing file \"subject.dat\".\n");
+                    return 1;                       //函数返回值为1表示找到该课程
+                }
+    }
+    else
+        fprintf(stdout, "Sorry, can't find subject \"%s\".\n", ID);
+    
+    return 0;               //函数返回值为0表示找不到该课程
+
+}

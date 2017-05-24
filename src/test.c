@@ -33,7 +33,17 @@ int main(void)
                                     }
     };
     
-    search_database(database_current.subject.ID);
+    DATABASE * database_current_ptr = &database_current;
+    search_database_subject(database_current.subject.ID);
+    fprintf(stdout, "学号:%s 姓名:%s 性别:%s 年龄:%d 专业:%s 班级:%s 联系方式:%s\n",
+                                                                                            (database_current_ptr -> student).ID,
+                                                                                            (database_current_ptr -> student).NAME,
+                                                                                            (database_current_ptr -> student).SEX,
+                                                                                            (database_current_ptr -> student).AGE,
+                                                                                            (database_current_ptr -> student).MAJOR,
+                                                                                            (database_current_ptr -> student).CLASS,
+                                                                                            (database_current_ptr -> student).NUMBER
+                                                                                            );
 
     return 0;
 
