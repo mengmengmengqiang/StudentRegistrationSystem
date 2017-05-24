@@ -19,8 +19,8 @@
 ******************************************************************/
 void show_database_info(void)
 {
-    FILE * database_b_file;             //二进制文件指针
-    DATABASE * database;                //声明一个指向数据库结构体的指针 
+    FILE * database_b_file;                 //二进制文件指针
+    DATABASE * database_read;               //从二进制文件中读出的数据库结构体 
 
     if ( (database_b_file = fopen("database.dat", "rb")) == NULL)
     {
@@ -29,13 +29,13 @@ void show_database_info(void)
     }
 
     rewind(database_b_file);              //定位到二进制文件开始
-    while ( fread(database, sizeof(DATABASE), 1, database_b_file) == 1)
+    while ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
         fprintf(stdout, "信息ID:%d 课程ID:%s 课程名称:%s 学生ID:%s 学生姓名:%s\n",
-                                                                                  database -> ID,
-                                                                                  database -> subject.ID,
-                                                                                  database -> subject.NAME,
-                                                                                  database -> student.ID,
-                                                                                  database -> student.NAME
+                                                                                  database_read -> ID,
+                                                                                  database_read -> subject.ID,
+                                                                                  database_read -> subject.NAME,
+                                                                                  database_read -> student.ID,
+                                                                                  database_read -> student.NAME
                                                                                 );
 
     //尝试关闭文件如果无法正常关闭则报错
@@ -51,7 +51,7 @@ void save_database_txt(void)
 {
     FILE * database_b_file;             //二进制文件指针
     FILE * database_t_file;             //文本文件指针
-    DATABASE * database;                //声明一个指向数据库结构体的指针 
+    DATABASE * database_read;                //从二进制文件中读出的数据库结构体
 
     //尝试以只读二进制模式
     if ( (database_b_file = fopen("database.dat", "rb")) == NULL)
@@ -61,13 +61,13 @@ void save_database_txt(void)
     }
 
     rewind(database_b_file);              //定位到二进制文件起始
-    while ( fread(database, sizeof(DATABASE), 1, database_b_file) == 1)
+    while ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
         fprintf(database_t_file, "信息ID:%d 课程ID:%s 课程名称:%s 学生ID:%s 学生姓名:%s\n",
-                                                                                  database -> ID,
-                                                                                  database -> subject.ID,
-                                                                                  database -> subject.NAME,
-                                                                                  database -> student.ID,
-                                                                                  database -> student.NAME
+                                                                                  (database_read -> ID),
+                                                                                  (database_read -> subject).ID,
+                                                                                  (database_read -> subject).NAME,
+                                                                                  (database_read -> student).ID,
+                                                                                  (database_read -> student).NAME
                                                                                 );
 
     //尝试关闭二进制文件如果无法正常关闭则报错
