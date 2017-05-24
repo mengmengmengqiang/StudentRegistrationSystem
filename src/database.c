@@ -31,11 +31,11 @@ void show_database_info(void)
     rewind(database_b_file);              //定位到二进制文件开始
     while ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
         fprintf(stdout, "信息ID:%d 课程ID:%s 课程名称:%s 学生ID:%s 学生姓名:%s\n",
-                                                                                  database_read -> ID,
-                                                                                  database_read -> subject.ID,
-                                                                                  database_read -> subject.NAME,
-                                                                                  database_read -> student.ID,
-                                                                                  database_read -> student.NAME
+                                                                                  (database_read -> ID),
+                                                                                  (database_read -> subject).ID,
+                                                                                  (database_read -> subject).NAME,
+                                                                                  (database_read -> student).ID,
+                                                                                  (database_read -> student).NAME
                                                                                 );
 
     //尝试关闭文件如果无法正常关闭则报错
