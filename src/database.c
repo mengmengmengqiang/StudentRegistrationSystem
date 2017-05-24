@@ -77,3 +77,63 @@ void save_database_txt(void)
     if (fclose(database_t_file) == EOF)
         fprintf(stderr, "Error closing file \"database.txt\".\n");
 }
+
+
+/***************添加选课信息到二进制文件*****************
+ * 添加选课信息到database.dat文件中
+ * 通过传入选课信息结构体指针的方式传入结构体信息到文件
+*********************************************************/
+void append_database(DATABASE * database_append) //待添加的课程信息结构体指针
+{
+    FILE * database_b_file;          //二进制文件指针 
+    DATABASE * database_read;        //从文件中读出的选课信息结构体指针
+    int flag = 0;                    //设置判断标志位,0表示选课信息未添加,1表示选课信息已存在
+
+    //尝试以更新二进制模式打开文件,如果文件打开失败,则猜测可能是文件不存在
+    //然后尝试以append二进制模式添加一个文件,如果文件真的不存在则新建一个文件
+    //如果创建失败,则返回错误信息,并且退出程序
+    //如果创建成功,则关闭文件
+    //然后再次以更新二进制模式打开文件
+    if ( (database_b_file = fopen("database.dat", "r+b")) == NULL)
+    {
+        if ( (database_b_file = fopen("database.dat", "ab")) == NULL)
+        {
+            fprintf(stderr, "Can't creat file \"database.dat\".\n");
+            exit(EXIT_FAILURE);
+        }
+        if ( fclose(database_b_file) == EOF)
+            fprintf(stderr, "Error closing file \"database.dat\".\n");
+
+        if( (database_b_file = fopen("database.dat", "r+b")) == NULL)
+        {
+            fprintf(stderr, "Error, Can't open and create file \"database.dat\".\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    rewind(database_b_file);           //定位到二进制文件开始
+    while ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
+    {
+        if (1)               //比对学生ID和课程ID,如果发现两者同时重复则提示数据重复并取消添加
+        {
+            flag = 1;                                       //flag为1表示选课信息存在
+            fprintf(stdout, "选课信息已存在,无需重复添加!");
+            break;                                          //终止遍历文件
+        }
+    }
+
+    //如果选课信息未添加,则定位到文件末尾,添加选课信息到二进制文件中
+    if (flag == 0)
+    {
+        fseek(database_b_file, 0L, SEEK_END); //定位至文件结尾
+
+        //尝试写入database_append信息到二进制文件中
+        if ( fwrite(database_append, sizeof(DATABASE), 1, database_b_file) != 1)
+            fprintf(stderr, "Error writing database_append to file \"database.dat\".");
+    }
+
+
+    //尝试关闭二进制文件
+    if (fclose(database_b_file) == EOF)
+        fprintf(stderr, "Error closing file \"database.dat\"\n");
+}

@@ -39,75 +39,18 @@ typedef struct {
  *
  * ****使用函数之前需要创建文件否则可能无法工作****
 ****************************************************************************/
-
-void show_subject_info(void)
-{
-    FILE * subject_file;
-    SUBJECT * subject;                  //声明一个指向结构体的指针
-
-    //尝试以只读二进制模式打开文件,如果文件打开失败,则输出错误信息并且退出
-    if ( (subject_file = fopen("subject.dat", "rb")) == NULL)
-    {
-        fprintf(stderr, "Can't open file \"subject.dat\", maybe you have not created it.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    rewind(subject_file);           //定位到文件开始
-    while ( fread(subject, sizeof(SUBJECT), 1, subject_file) == 1)
-        fprintf(stdout, "课程代码:%s  课程名称:%s 课程性质:%s 总学时:%d 学分:%d :%d 已选人数:%d 课程容量:%d",
-                                                                                                             subject -> ID,
-                                                                                                             subject -> NAME,
-                                                                                                             subject -> NATURE,
-                                                                                                             subject -> PERIOD,
-                                                                                                             subject -> CREDIT,
-                                                                                                             subject -> START,
-                                                                                                             subject -> SELECTED,
-                                                                                                             subject -> MAX_SELECTED
-                                                                                                             );
-
-    if (fclose(subject_file) == EOF)
-        fprintf(stderr, "Error closing file \"subject.dat\".\n");
-}
+void show_subject_info(void);
 
 
 /******************************************************************
  *保存课程信息到文本文件以便查阅
 *******************************************************************/
-void save_subject_txt(void)
-{
-    FILE * subject_b_file;    //二进制文件指针
-    FILE * subject_t_file;    //文本文件指针
-    SUBJECT * subject;                  //声明一个指向课程结构体的指针
+void save_subject_txt(void);
 
-    //尝试以只读二进制模式打开文件,如果文件打开失败,则输出错误信息并且退出
-    if ( (subject_b_file = fopen("subject.dat", "rb")) == NULL)
-    {
-        fprintf(stderr, "Can't open file \"subject.dat\", maybe you have not created it.\n");
-        exit(EXIT_FAILURE);
-    }
+/***************添加课程信息到二进制文件*****************
+ * 添加课程到subject.dat文件中
+ * 通过传入课程信息结构体指针的方式传入结构体信息到文件
+*********************************************************/
+void append_subject(SUBJECT * subject_append); //待添加的课程信息结构体
 
-    //尝试以写文本模式打开/创建文件,如果文件打开/创建失败,则输出错误信息并且退出
-    if ( (subject_t_file = fopen("subject.txt", "w")) == NULL)
-    {
-        fprintf(stderr, "Can't open or creat file \"subject.txt\".\n");
-        exit(EXIT_FAILURE);
-    }
-    rewind(subject_b_file);           //定位到二进制文件开始
-    while ( fread(subject, sizeof(SUBJECT), 1, subject_b_file) == 1) //从二进制文件中读取数据保存到结构体中然后打印到文本文件中
-        fprintf(subject_t_file, "课程代码:%s  课程名称:%s 课程性质:%s 总学时:%d 学分:%d :%d 已选人数:%d 课程容量:%d",
-                                                                                                             subject -> ID,
-                                                                                                             subject -> NAME,
-                                                                                                             subject -> NATURE,
-                                                                                                             subject -> PERIOD,
-                                                                                                             subject -> CREDIT,
-                                                                                                             subject -> START,
-                                                                                                             subject -> SELECTED,
-                                                                                                             subject -> MAX_SELECTED
-                                                                                                             );
-
-    if (fclose(subject_b_file) == EOF) //尝试关闭二进制文件
-        fprintf(stderr, "Error closing file \"subject.dat\".\n");
-    if (fclose(subject_t_file) == EOF) //尝试关闭文本文件
-        fprintf(stderr, "Error closing file \"subject.txt\".\n");
-}
 #endif
