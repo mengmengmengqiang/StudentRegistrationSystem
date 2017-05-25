@@ -64,9 +64,9 @@ void save_subject_txt(void)
     }
 
     //尝试以写文本模式打开/创建文件,如果文件打开/创建失败,则输出错误信息并且退出
-    if ( (subject_t_file = fopen("subject.txt", "w")) == NULL)
+    if ( (subject_t_file = fopen("课程信息表.txt", "w")) == NULL)
     {
-        fprintf(stderr, "Can't open or creat file \"subject.txt\".\n");
+        fprintf(stderr, "Can't open or creat file \"课程信息表.txt\".\n");
         exit(EXIT_FAILURE);
     }
     rewind(subject_b_file);           //定位到二进制文件开始
@@ -85,7 +85,7 @@ void save_subject_txt(void)
     if (fclose(subject_b_file) == EOF) //尝试关闭二进制文件
         fprintf(stderr, "Error closing file \"subject.dat\".\n");
     if (fclose(subject_t_file) == EOF) //尝试关闭文本文件
-        fprintf(stderr, "Error closing file \"subject.txt\".\n");
+        fprintf(stderr, "Error closing file \"课程信息表.txt\".\n");
     else
         fprintf(stdout, "save subject_txt_file successfully\n");
 }
