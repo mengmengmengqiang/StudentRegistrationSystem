@@ -15,7 +15,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "assert.h"
-
+#include "string_io.h"
 //宏定义
 #define STUDENT_ID_LEN 20                   //学号长度
 #define STUDENT_NAME_LEN 50                 //姓名长度

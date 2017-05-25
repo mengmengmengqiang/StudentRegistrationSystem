@@ -19,12 +19,12 @@
 void show_student_info(void)
 {
     FILE * student_b_file;    //二进制文件指针
-    STUDENT * student_read;      //从文件中读出的学生结构体的指针
+    STUDENT * student_read = (STUDENT *)malloc(sizeof(STUDENT));//从文件中读出的学生结构体的指针,并且分配内存
 
     //尝试以只读二进制模式打开文件,如果文件打开失败,则输出错误信息并且退出
     if ( (student_b_file = fopen("student.dat", "rb")) == NULL)
     {
-        fprintf(stderr, "Cant't open file \"student.dat\", maybe you have not created it.\n");
+        fprintf(stderr, "Error, file \"student.dat\" doesn't exits.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -41,6 +41,7 @@ void show_student_info(void)
                                                                                         );
     if (fclose(student_b_file) == EOF)
         fprintf(stderr, "Error closing file \"student.dat\"\n");
+    free(student_read);
 }
 
 
@@ -51,19 +52,19 @@ void save_student_txt(void)
 {
     FILE * student_b_file; //二进制文件指针
     FILE * student_t_file; //文本文件指针
-    STUDENT * student_read;      //从文件中读出的学生结构体指针
+    STUDENT * student_read = (STUDENT *)malloc(sizeof(STUDENT)); //从文件中读出的学生结构体指针,并且分配内存
 
     //尝试以只读二进制模式打开二进制文件,如果文件打开失败,则输出错误信息并且退出
     if ( (student_b_file = fopen("student.dat", "rb")) == NULL)
     {
-        fprintf(stderr, "Cant't open file \"student.dat\", maybe you have not created it.\n");
+        fprintf(stderr, "Error, file \"student.dat\" doesn't exits.\n");
         exit(EXIT_FAILURE);
     }
 
     //尝试以写文本模式打开文本文件,如果文件打开/创建失败,则输出错误信息并且退出
-    if ( (student_t_file = fopen("student.txt", "w")) == NULL)
+    if ( (student_t_file = fopen("学生信息表.txt", "w")) == NULL)
     {
-        fprintf(stderr, "Cant't open or create file \"student.txt\".\n");
+        fprintf(stderr, "Cant't open or create file \"学生信息表.txt\".\n");
         exit(EXIT_FAILURE);
     }
     rewind(student_b_file);           //定位到二进制文件开始
@@ -80,7 +81,11 @@ void save_student_txt(void)
     if (fclose(student_b_file) == EOF) //尝试关闭二进制文件
         fprintf(stderr, "Error closing file \"student.dat\"\n");
     if (fclose(student_t_file) == EOF) //尝试关闭文本文件
-        fprintf(stderr, "Error closing file \"student.txt\"\n");
+        fprintf(stderr, "Error closing file \"学生信息表.txt\"\n");
+    else
+        fprintf(stdout, "save student_txt_file successfully!\n");
+
+    free(student_read);
 }
 
 
@@ -91,7 +96,7 @@ void save_student_txt(void)
 void append_student(STUDENT * student_append) //待添加的学生信息结构体指针
 {
     FILE * student_b_file;          //二进制文件指针 
-    STUDENT * student_read;         //从文件中读出的学生信息结构体指针
+    STUDENT * student_read = (STUDENT *)malloc(sizeof(STUDENT)); //从文件中读出的学生信息结构体指针,并且分配内存
     int flag = 0;                   //设置判断标志位,0表示学生信息未添加,1表示学生信息已存在
 
     //尝试以更新二进制模式打开文件,如果文件打开失败,则猜测可能是文件不存在
@@ -119,7 +124,7 @@ void append_student(STUDENT * student_append) //待添加的学生信息结构�
     rewind(student_b_file);           //定位到二进制文件开始
     while ( fread(student_read, sizeof(STUDENT), 1, student_b_file) == 1)
     {
-        if (1)               //比对学生ID,如果发现重复则提示数据重复并取消添加
+        if (strcmp(student_read -> ID, student_append -> ID) == 0)               //比对学生ID,如果发现重复则提示数据重复并取消添加
         {
             flag = 1;                                       //flag为1表示学生信息存在
             fprintf(stdout, "学生信息已存在,无需重复添加!");
@@ -135,12 +140,15 @@ void append_student(STUDENT * student_append) //待添加的学生信息结构�
         //尝试写入student_append信息到二进制文件中
         if ( fwrite(student_append, sizeof(STUDENT), 1, student_b_file) != 1)
             fprintf(stderr, "Error writing student_append to file \"student.dat\".");
+        else
+            fprintf(stdout, "append student successfully\n");
     }
 
 
     //尝试关闭二进制文件
     if (fclose(student_b_file) == EOF)
         fprintf(stderr, "Error closing file \"student.dat\"\n");
+    free(student_read);
 }
 
 
@@ -154,15 +162,15 @@ void append_student(STUDENT * student_append) //待添加的学生信息结构�
 int search_student(const char * ID)   //搜索的学生ID字符串指针
 {   
     FILE * student_b_file;         //二进制文件指针
-    STUDENT * student_read;        //从二进制文件中读取的学生信息结构体
+    STUDENT * student_read = (STUDENT *)malloc(sizeof(STUDENT));        //从二进制文件中读取的学生信息结构体,并且分配内存
 
     //从student.dat二进制文件中读取学生信息结构体
     if ( (student_b_file = fopen("student.dat", "rb")) != NULL) //如果文件打开成功
     {
         while ( fread(student_read, sizeof(STUDENT), 1, student_b_file) == 1)
-            if( 1 )                                             //比对学生ID,如果符合则输出学生信息退出程序
-                {
-                    fprintf(stdout, "学号:%s 姓名:%s 性别:%s 年龄:%d 专业:%s 班级:%s 联系方式:%s\n",
+            if( strcmp(ID, (student_read -> ID)) == 0)                                             //比对学生ID,如果符合则输出学生信息,并且返回值为1
+            {
+                fprintf(stdout, "学号:%s 姓名:%s 性别:%s 年龄:%d 专业:%s 班级:%s 联系方式:%s\n",
                                                                                             student_read -> ID,
                                                                                             student_read -> NAME,
                                                                                             student_read -> SEX,
@@ -171,14 +179,14 @@ int search_student(const char * ID)   //搜索的学生ID字符串指针
                                                                                             student_read -> CLASS,
                                                                                             student_read -> NUMBER
                                                                                             );
-                    if ( fclose(student_b_file) == EOF )
-                        fprintf(stderr, "Error closing file \"student.dat\".\n");
-                    return 1;                       //函数返回值为1表示找到该学生
-                }
+                if ( fclose(student_b_file) == EOF )
+                    fprintf(stderr, "Error closing file \"student.dat\".\n");
+                return 1;                       //函数返回值为1表示找到该学生
+            }
     }
     else
         fprintf(stdout, "Sorry, can't find student \"%s\".\n", ID);
     
     return 0;               //函数返回值为0表示找不到该学生
-
+    free(student_read);
 }

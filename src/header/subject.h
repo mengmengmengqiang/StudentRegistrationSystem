@@ -14,7 +14,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "assert.h"
-
+#include "string_io.h"
 //宏定义
 #define SUBJECT_ID_LEN  10             //课程代码长度
 #define SUBJECT_NAME_LEN 50            //课程名称长度

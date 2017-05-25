@@ -37,7 +37,7 @@ void save_database_txt(void);
  * 添加选课信息到datbase.dat文件中
  * 通过传入选课信息结构体指针的方式传入结构体信息到文件
 *********************************************************/
-void append_database(DATABASE * database_append); //待添加的选课信息结构体指针
+void append_database(const DATABASE * database_append); //待添加的选课信息结构体指针
 
 /**************************************************************************
  * 如果search_subject()找到了课程信息则\
