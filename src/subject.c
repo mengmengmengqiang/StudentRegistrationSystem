@@ -20,7 +20,7 @@
 void show_subject_info(void)
 {
     FILE * subject_b_file;                   //二进制课程信息文件
-    SUBJECT * subject_read;                  //从二进制文件中读取的课程信息结构体指针
+    SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));                  //从二进制文件中读取的课程信息结构体指针
 
     //尝试以只读二进制模式打开文件,如果文件打开失败,则输出错误信息并且退出
     if ( (subject_b_file = fopen("subject.dat", "rb")) == NULL)
@@ -44,6 +44,7 @@ void show_subject_info(void)
 
     if (fclose(subject_b_file) == EOF)
         fprintf(stderr, "Error closing file \"subject.dat\".\n");
+    free(subject_read);
 }
 
 
@@ -54,7 +55,7 @@ void save_subject_txt(void)
 {
     FILE * subject_b_file;    //二进制文件指针
     FILE * subject_t_file;    //文本文件指针
-    SUBJECT * subject_read;   //从二进制文件中读取的课程信息结构体指针
+    SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));   //从二进制文件中读取的课程信息结构体指针
 
     //尝试以只读二进制模式打开文件,如果文件打开失败,则输出错误信息并且退出
     if ( (subject_b_file = fopen("subject.dat", "rb")) == NULL)
@@ -88,6 +89,7 @@ void save_subject_txt(void)
         fprintf(stderr, "Error closing file \"课程信息表.txt\".\n");
     else
         fprintf(stdout, "save subject_txt_file successfully\n");
+    free(subject_read);
 }
 
 
@@ -98,7 +100,7 @@ void save_subject_txt(void)
 void append_subject(SUBJECT * subject_append) //待添加的课程信息结构体指针
 {
     FILE * subject_b_file;          //二进制文件指针 
-    SUBJECT * subject_read;         //从二进制文件中读出的课程信息结构体指针
+    SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));         //从二进制文件中读出的课程信息结构体指针
     int flag = 0;                   //设置判断标志位,0表示课程信息未添加,1表示课程信息已存在
 
     //尝试以更新二进制模式打开文件,如果文件打开失败,则猜测可能是文件不存在
@@ -151,6 +153,8 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
     //尝试关闭二进制文件
     if (fclose(subject_b_file) == EOF)
         fprintf(stderr, "Error closing file \"subject.dat\"\n");
+
+    free(subject_read);
 }
 
 
@@ -193,5 +197,6 @@ int search_subject(const char * ID)   //搜索的课程ID字符串指针
     
     
     return 0;               //函数返回值为0表示找不到该课程
+    free(subject_read);
 
 }
