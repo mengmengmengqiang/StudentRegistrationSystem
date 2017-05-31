@@ -1,7 +1,7 @@
 /*************************************************************************
 	> File Name: subject.c
-	> Author: 
-	> Mail: 
+	> Author:
+	> Mail:
 	> Created Time: 2017年05月23日 星期二 09时27分27秒
     > Featurs: subjectinformation.
  ************************************************************************/
@@ -21,7 +21,7 @@ void show_subject_info(void)
 {
     FILE * subject_b_file;                   //二进制课程信息文件
     SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));                  //从二进制文件中读取的课程信息结构体指针
-
+    int count = 0;
     //尝试以只读二进制模式打开文件,如果文件打开失败,则输出错误信息并且退出
     if ( (subject_b_file = fopen("subject.dat", "rb")) == NULL)
     {
@@ -31,7 +31,9 @@ void show_subject_info(void)
 
     rewind(subject_b_file);           //定位到文件开始
     while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
-        fprintf(stdout, "课程代码:%s  课程名称:%s 课程性质:%s 总学时:%d 学分:%d 开课学期:%d 已选人数:%d 课程容量:%d",
+        {
+            count++;
+            fprintf(stdout, "ID:%s NAME:%s NATURE:%s PERIOD:%d CREDIT:%d START:%d SELECTED:%d MAX_SELECTED:%d\n",
                                                                                                              subject_read -> ID,
                                                                                                              subject_read -> NAME,
                                                                                                              subject_read -> NATURE,
@@ -41,6 +43,9 @@ void show_subject_info(void)
                                                                                                              subject_read -> SELECTED,
                                                                                                              subject_read -> MAX_SELECTED
                                                                                                              );
+        }
+
+    fprintf(stdout, "count : %d\n", count);
 
     if (fclose(subject_b_file) == EOF)
         fprintf(stderr, "Error closing file \"subject.dat\".\n");
@@ -65,14 +70,14 @@ void save_subject_txt(void)
     }
 
     //尝试以写文本模式打开/创建文件,如果文件打开/创建失败,则输出错误信息并且退出
-    if ( (subject_t_file = fopen("课程信息表.txt", "w")) == NULL)
+    if ( (subject_t_file = fopen("subject_info.txt", "w")) == NULL)
     {
-        fprintf(stderr, "Can't open or creat file \"课程信息表.txt\".\n");
+        fprintf(stderr, "Can't open or creat file \"subject_info.txt\".\n");
         exit(EXIT_FAILURE);
     }
     rewind(subject_b_file);           //定位到二进制文件开始
     while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1) //从二进制文件中读取数据保存到结构体中然后打印到文本文件中
-        fprintf(subject_t_file, "课程代码:%s  课程名称:%s 课程性质:%s 总学时:%d 学分:%d :%d 已选人数:%d 课程容量:%d",
+        fprintf(subject_t_file, "ID:%s NAME:%s NATURE:%s PERIOD:%d CREDIT:%d START:%d SELECTED:%d MAX_SELECTED:%d",
                                                                                                              subject_read -> ID,
                                                                                                              subject_read -> NAME,
                                                                                                              subject_read -> NATURE,
@@ -86,7 +91,7 @@ void save_subject_txt(void)
     if (fclose(subject_b_file) == EOF) //尝试关闭二进制文件
         fprintf(stderr, "Error closing file \"subject.dat\".\n");
     if (fclose(subject_t_file) == EOF) //尝试关闭文本文件
-        fprintf(stderr, "Error closing file \"课程信息表.txt\".\n");
+        fprintf(stderr, "Error closing file \"subject_info.txt\".\n");
     else
         fprintf(stdout, "save subject_txt_file successfully\n");
     free(subject_read);
@@ -99,7 +104,7 @@ void save_subject_txt(void)
 *********************************************************/
 void append_subject(SUBJECT * subject_append) //待添加的课程信息结构体指针
 {
-    FILE * subject_b_file;          //二进制文件指针 
+    FILE * subject_b_file;          //二进制文件指针
     SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));         //从二进制文件中读出的课程信息结构体指针
     int flag = 0;                   //设置判断标志位,0表示课程信息未添加,1表示课程信息已存在
 
@@ -112,7 +117,7 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
     {
         if ( (subject_b_file = fopen("subject.dat", "ab")) == NULL)
         {
-            fprintf(stderr, "Can't creat file \"subject.dat\".\n");
+            fprintf(stderr, "Can't create file \"subject.dat\".\n");
             exit(EXIT_FAILURE);
         }
         if ( fclose(subject_b_file) == EOF)
@@ -129,10 +134,10 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
     rewind(subject_b_file);           //定位到二进制文件开始
     while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
     {
-        if (1)               //比对课程ID,如果发现重复则提示数据重复并取消添加
+        if (strcmp(subject_read -> ID, subject_append -> ID) == 0)               //比对课程ID,如果发现重复则提示数据重复并取消添加
         {
             flag = 1;                                       //flag为1表示课程信息存在
-            fprintf(stdout, "课程信息已存在,无需重复添加!");
+            fprintf(stdout, "subject exists!");
             break;                                          //终止遍历文件
         }
     }
@@ -144,7 +149,7 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
 
         //尝试写入subject_append信息到二进制文件中
         if ( fwrite(subject_append, sizeof(SUBJECT), 1, subject_b_file) != 1)
-            fprintf(stderr, "Error writing subject_append to file \"subject.dat\".");
+            fprintf(stderr, "Error writing subject_append to file \"subject.dat\".\n");
         else
             fprintf(stdout, "append subject successfully\n");
     }
@@ -165,8 +170,8 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
  * 比较判断是否存在这个课程
  * 若存在则将搜索权交给search_database_subject()去搜索课程的选课情况信息
 ********************************************************************/
-int search_subject(const char * ID)   //搜索的课程ID字符串指针
-{   
+SUBJECT search_subject(const char * ID)   //搜索的课程ID字符串指针
+{
     FILE * subject_b_file;         //二进制文件指针
     SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));        //从二进制文件中读取的课程信息结构体
 
@@ -176,7 +181,7 @@ int search_subject(const char * ID)   //搜索的课程ID字符串指针
         while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
             if( strcmp(ID, (subject_read -> ID)) == 0)                                             //比对课程ID,如果符合则输出课程信息退出程序
             {
-                fprintf(stdout, "课程代码:%s 课程名称:%s 课程性质:%s 总学时:%d 学分:%d 开课学期:%d 课程容量:%d\n",
+                fprintf(stdout, "ID:%s NAME:%s NATURE:%s PERIOD:%d CREDIT:%d START:%d MAX_SELECTED:%d\n",
                                                                                             subject_read -> ID,
                                                                                             subject_read -> NAME,
                                                                                             subject_read -> NATURE,
@@ -187,16 +192,122 @@ int search_subject(const char * ID)   //搜索的课程ID字符串指针
                                                                                             );
                 if ( fclose(subject_b_file) == EOF )
                     fprintf(stderr, "Error closing file \"subject.dat\".\n");
-                return 1;                       //函数返回值为1表示找到该课程
+                return *subject_read;                       //函数返回值为1表示找到该课程
             }
             else
                 fprintf(stdout, "Sorry, can't find subject \"%s\".\n", ID);
     }
     else
         fprintf(stdout, "Sorry, can't find file \"subject.dat\"\n");
-    
-    
-    return 0;               //函数返回值为0表示找不到该课程
+
     free(subject_read);
 
+}
+
+
+/*******************************************************
+*delete by search
+*ID is subject's ID
+*******************************************************/
+void delete_subject(const char * ID)
+{
+    //将每一门的课程保存在文件里,文件名为课程的ID
+    //搜索文件的原理为在文件都可读的权限下,尝试打开,
+    //如果无法打开则搜索不到文件
+
+    FILE * subject_b_file;         //二进制文件指针
+    FILE * temporary_file;          //teporary file
+
+    SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));       //从二进制文件中读取的数据库结构体
+    char * file_name = (char *)malloc( (SUBJECT_ID_LEN + 5) * sizeof(char) ); //申请内存,存储用于搜索的文件名
+    //将课程ID复制到file_name指向的地址空间里同时申请内存
+    //返回值为指向file_name的二级指针(不使用)
+    strcpy(file_name, ID);
+    //将".dat"文件后缀复制到file_name指向的地址空间后面,并且覆盖原有的\0结束符
+    strcat(file_name, ".dat");
+
+    if ( (temporary_file = fopen("temporary", "wb")) == NULL)
+        fprintf(stderr, "error create file \"temporary\"\n");
+    //测试输出搜索的文件名
+    //fprintf(stdout, "filename: \"%s\"\n", file_name);
+
+    //搜索文件是否存在
+    //如果搜索到则从第一个结构体里读取出选课信息结构体,
+    //然后输出课程信息结构体的基本信息,
+    //********(如果可能的话,还可以从最后一个结构体读出课程当前的已选容量)
+    if ( (subject_b_file = fopen("subject.dat", "rb")) != NULL) //如果文件打开成功
+    {
+        while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
+        {
+            if (strcmp(ID, subject_read -> ID) == 0)
+            {
+                remove(file_name); //delete related class file
+                continue;
+            }
+            fwrite(subject_read, sizeof(SUBJECT), 1, temporary_file);
+        }
+
+        if ( fclose(subject_b_file) == EOF )
+            fprintf(stderr, "Error closing file \"subject.dat\".\n");
+        if ( fclose(temporary_file) == EOF )
+            fprintf(stderr, "Error closing file \"temporary\"\n");
+    }
+    else
+        fprintf(stdout, "No subjects informations.\n");
+
+    //remove subject.dat file
+    remove("subject.dat");
+    //rename  to subject.dat file
+    rename("temporary", "subject.dat");
+
+    free(subject_read);
+    free(file_name);
+}
+
+
+/*************************************************************
+*edit by search
+**************************************************************/
+void edit_subject(const char * ID)
+{
+    FILE * subject_b_file;         //äºè¿å¶æä»¶æé
+    SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));        //ä»äºè¿å¶æä»¶ä¸­è¯»åçå­¦çä¿¡æ¯ç»æä½,å¹¶ä¸åéåå­
+
+    //ä»student.datäºè¿å¶æä»¶ä¸­è¯»åå­¦çä¿¡æ¯ç»æä½
+    if ( (subject_b_file = fopen("subject.dat", "rb")) != NULL) //å¦ææä»¶æå¼æå
+    {
+        while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
+            if( strcmp(ID, (subject_read -> ID)) == 0)                                             //æ¯å¯¹å­¦çID,å¦æç¬¦ååè¾åºå­¦çä¿¡æ¯,å¹¶ä¸è¿åç»æä½
+            {
+                fprintf(stdout, "ID:%s NAME:%s NATURE:%s PERIOD:%d CREDIT:%d START:%d MAX_SELECTED:%d",
+                                                                                            subject_read -> ID,
+                                                                                            subject_read -> NAME,
+                                                                                            subject_read -> NATURE,
+                                                                                            subject_read -> PERIOD,
+                                                                                            subject_read -> CREDIT,
+                                                                                            subject_read -> START,
+                                                                                            subject_read -> MAX_SELECTED
+                                                                                            );
+                subject_scanf(
+                            subject_read -> ID,
+                            subject_read -> NAME,
+                            subject_read -> NATURE,
+                            &(subject_read -> PERIOD),
+                            &(subject_read -> CREDIT),
+                            &(subject_read -> START),
+                            &(subject_read -> SELECTED),
+                            &(subject_read -> MAX_SELECTED)
+                            );
+
+                fseek(subject_b_file, -sizeof(SUBJECT), SEEK_CUR);
+                fwrite(subject_read, sizeof(SUBJECT), 1, subject_b_file);
+
+                if ( fclose(subject_b_file) == EOF )
+                    fprintf(stderr, "Error closing file \"subject.dat\".\n");
+            }
+    }
+    else
+        fprintf(stdout, "Sorry, can't find subject \"%s\".\n", ID);
+
+    free(subject_read);
 }

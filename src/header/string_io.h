@@ -1,7 +1,7 @@
 /*************************************************************************
 	> File Name: sting_io.h
-	> Author: 
-	> Mail: 
+	> Author:
+	> Mail:
 	> Created Time: 2017年05月25日 星期四 08时22分01秒
  ************************************************************************/
 
@@ -20,10 +20,33 @@
 *********************************************************/
 char * s_gets(char * st, int n);
 
-/********************************************************
- * 匹配字符串是否相同
- * ID为结构体中的字符串, st为用户输入的字符串
- * 暂时不支持模糊匹配
-*********************************************************/
-int s_strcmp(const char * ID, const char * st);
+/******************************************
+*empty buffer
+******************************************/
+int s_scanf(const char * format, const int * mode);
+
+/*****************************************
+*scanf student struct
+*****************************************/
+int student_scanf( char * ID,
+                   char * NAME,
+                   char * SEX,
+                   int * AGE,
+                   char * MAJOR,
+                   char * CLASS,
+                   char * NUMBER
+                  );
+
+/*****************************************
+*scanf subject struct
+*****************************************/
+int subject_scanf( char * ID,
+                   char * NAME,
+                   char * NATURE,
+                   int * PERIOD,
+                   int * CREDIT,
+                   int * START,
+                   int * SELECTED,
+                   int * MAX_SELECTED
+                  );
 #endif
