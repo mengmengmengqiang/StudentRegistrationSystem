@@ -25,7 +25,7 @@ void show_student_info(void)
     if ( (student_b_file = fopen("student.dat", "rb")) == NULL)
     {
         fprintf(stderr, "Error, file \"student.dat\" doesn't exits.\n");
-        exit(EXIT_FAILURE);
+        return;
     }
 
     rewind(student_b_file);           //å®ä½å°æä»¶å¼å§
@@ -63,14 +63,14 @@ void save_student_txt(void)
     if ( (student_b_file = fopen("student.dat", "rb")) == NULL)
     {
         fprintf(stderr, "Error, file \"student.dat\" doesn't exits.\n");
-        exit(EXIT_FAILURE);
+        return;
     }
 
     //å°è¯ä»¥åææ¬æ¨¡å¼æå¼ææ¬æä»¶,å¦ææä»¶æå¼/åå»ºå¤±è´¥,åè¾åºéè¯¯ä¿¡æ¯å¹¶ä¸éåº
     if ( (student_t_file = fopen("student_info.txt", "w")) == NULL)
     {
         fprintf(stderr, "Cant't open or create file \"student_info.txt\".\n");
-        exit(EXIT_FAILURE);
+        return;
     }
     rewind(student_b_file);           //å®ä½å°äºè¿å¶æä»¶å¼å§
     while ( fread(student_read, sizeof(STUDENT), 1, student_b_file) == 1) //ä»äºè¿å¶æä»¶ä¸­è¯»åæ°æ®ä¿å­å°ç»æä½ä¸­ç¶åæå°å°ææ¬æä»¶ä¸­
@@ -114,7 +114,7 @@ void append_student(STUDENT * student_append) //å¾æ·»å çå­¦ç
         if ( (student_b_file = fopen("student.dat", "ab")) == NULL)
         {
             fprintf(stderr, "Can't create file \"student.dat\".\n");
-            exit(EXIT_FAILURE);
+            return;
         }
         if ( fclose(student_b_file) == EOF)
             fprintf(stderr, "Error closing file \"student.dat\".\n");
@@ -122,7 +122,7 @@ void append_student(STUDENT * student_append) //å¾æ·»å çå­¦ç
         if( (student_b_file = fopen("student.dat", "r+b")) == NULL)
         {
             fprintf(stderr, "Error, Can't open and create file \"student.dat\".\n");
-            exit(EXIT_FAILURE);
+            return;
         }
     }
 
@@ -251,7 +251,7 @@ void edit_student(const char * ID)
     STUDENT * student_read = (STUDENT *)malloc(sizeof(STUDENT));        //ä»äºè¿å¶æä»¶ä¸­è¯»åçå­¦çä¿¡æ¯ç»æä½,å¹¶ä¸åéåå­
 
     //ä»student.datäºè¿å¶æä»¶ä¸­è¯»åå­¦çä¿¡æ¯ç»æä½
-    if ( (student_b_file = fopen("student.dat", "rb")) != NULL) //å¦ææä»¶æå¼æå
+    if ( (student_b_file = fopen("student.dat", "r+b")) != NULL) //å¦ææä»¶æå¼æå
     {
         while ( fread(student_read, sizeof(STUDENT), 1, student_b_file) == 1)
             if( strcmp(ID, (student_read -> ID)) == 0)                                             //æ¯å¯¹å­¦çID,å¦æç¬¦ååè¾åºå­¦çä¿¡æ¯,å¹¶ä¸è¿åç»æä½
@@ -275,8 +275,10 @@ void edit_student(const char * ID)
                             student_read -> NUMBER
                             );
 
-                fseek(student_b_file, -sizeof(STUDENT), SEEK_CUR);
-                fwrite(student_read, sizeof(STUDENT), 1, student_b_file);
+                if (fseek(student_b_file, -sizeof(STUDENT), SEEK_CUR) != 0)
+                    fprintf(stderr, "error fseek\n");
+                if (fwrite(student_read, sizeof(STUDENT), 1, student_b_file) != 1)
+                    fprintf(stdout, "write failed\n");
 
                 if ( fclose(student_b_file) == EOF )
                     fprintf(stderr, "Error closing file \"student.dat\".\n");

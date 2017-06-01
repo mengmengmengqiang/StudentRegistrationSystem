@@ -26,7 +26,7 @@ void show_subject_info(void)
     if ( (subject_b_file = fopen("subject.dat", "rb")) == NULL)
     {
         fprintf(stderr, "Can't open file \"subject.dat\", maybe you have not created it.\n");
-        exit(EXIT_FAILURE);
+        return;
     }
 
     rewind(subject_b_file);           //定位到文件开始
@@ -66,14 +66,14 @@ void save_subject_txt(void)
     if ( (subject_b_file = fopen("subject.dat", "rb")) == NULL)
     {
         fprintf(stderr, "Can't open file \"subject.dat\", maybe you have not created it.\n");
-        exit(EXIT_FAILURE);
+        return;
     }
 
     //尝试以写文本模式打开/创建文件,如果文件打开/创建失败,则输出错误信息并且退出
     if ( (subject_t_file = fopen("subject_info.txt", "w")) == NULL)
     {
         fprintf(stderr, "Can't open or creat file \"subject_info.txt\".\n");
-        exit(EXIT_FAILURE);
+        return;
     }
     rewind(subject_b_file);           //定位到二进制文件开始
     while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1) //从二进制文件中读取数据保存到结构体中然后打印到文本文件中
@@ -118,7 +118,7 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
         if ( (subject_b_file = fopen("subject.dat", "ab")) == NULL)
         {
             fprintf(stderr, "Can't create file \"subject.dat\".\n");
-            exit(EXIT_FAILURE);
+            return;
         }
         if ( fclose(subject_b_file) == EOF)
             fprintf(stderr, "Error closing file \"subject.dat\".\n");
@@ -126,7 +126,7 @@ void append_subject(SUBJECT * subject_append) //待添加的课程信息结构�
         if( (subject_b_file = fopen("subject.dat", "r+b")) == NULL)
         {
             fprintf(stderr, "Error, Can't open and creat file \"subject.dat\".\n");
-            exit(EXIT_FAILURE);
+            return;
         }
     }
 
@@ -274,7 +274,7 @@ void edit_subject(const char * ID)
     SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));        //ä»äºè¿å¶æä»¶ä¸­è¯»åçå­¦çä¿¡æ¯ç»æä½,å¹¶ä¸åéåå­
 
     //ä»student.datäºè¿å¶æä»¶ä¸­è¯»åå­¦çä¿¡æ¯ç»æä½
-    if ( (subject_b_file = fopen("subject.dat", "rb")) != NULL) //å¦ææä»¶æå¼æå
+    if ( (subject_b_file = fopen("subject.dat", "r+b")) != NULL) //å¦ææä»¶æå¼æå
     {
         while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
             if( strcmp(ID, (subject_read -> ID)) == 0)                                             //æ¯å¯¹å­¦çID,å¦æç¬¦ååè¾åºå­¦çä¿¡æ¯,å¹¶ä¸è¿åç»æä½
@@ -299,8 +299,10 @@ void edit_subject(const char * ID)
                             &(subject_read -> MAX_SELECTED)
                             );
 
-                fseek(subject_b_file, -sizeof(SUBJECT), SEEK_CUR);
-                fwrite(subject_read, sizeof(SUBJECT), 1, subject_b_file);
+                if (fseek(subject_b_file, -sizeof(SUBJECT), SEEK_CUR) != 0)
+                    fprintf(stderr, "error fseek\n");
+                if (fwrite(subject_read, sizeof(SUBJECT), 1, subject_b_file) != 1)
+                    fprintf(stdout, "write failed.\n");
 
                 if ( fclose(subject_b_file) == EOF )
                     fprintf(stderr, "Error closing file \"subject.dat\".\n");

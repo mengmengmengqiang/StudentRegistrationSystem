@@ -46,7 +46,7 @@ void show_database_info(void)
                 while ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
                 {
                     count++; //count
-                    fprintf(stdout, "课程ID:%s 课程名称:%s 学生ID:%s 学生姓名:%s\n",
+                    fprintf(stdout, "SUBJECT_ID:%s SUBJECT_NAME:%s STUDENT_ID:%s STUDENT_NAME:%s\n",
                                                                                     (database_read -> subject).ID,
                                                                                     (database_read -> subject).NAME,
                                                                                     (database_read -> student).ID,
@@ -85,6 +85,7 @@ void save_database_txt(void)
 
     DATABASE * database_read = (DATABASE *)malloc(sizeof(DATABASE));//从二进制文件中读出的数据库结构体,并且申请内存
 
+    remove("subject_class.txt"); //delete pre file.
     if ( (subject_b_file = fopen("subject.dat", "rb")) != NULL )
     {
         while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
@@ -98,7 +99,7 @@ void save_database_txt(void)
             //输出搜索的文件名
             //fprintf(stdout, "search filename: \"%s\"\n", file_name);
 
-            if ( ((database_b_file = fopen(file_name, "rb")) != NULL) && ((database_t_file = fopen("subject_class.txt", "w+")) != NULL) )
+            if ( ((database_b_file = fopen(file_name, "rb")) != NULL) && ((database_t_file = fopen("subject_class.txt", "a+")) != NULL) )
             {
                 rewind(database_b_file);              //定位到二进制文件开始
                 while ( fread(database_read, sizeof(DATABASE), 1, database_b_file) == 1)
