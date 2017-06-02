@@ -270,14 +270,12 @@ void delete_subject(const char * ID)
 **************************************************************/
 void edit_subject(const char * ID)
 {
-    FILE * subject_b_file;         //äºè¿å¶æä»¶æé
-    SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));        //ä»äºè¿å¶æä»¶ä¸­è¯»åçå­¦çä¿¡æ¯ç»æä½,å¹¶ä¸åéåå­
-
-    //ä»student.datäºè¿å¶æä»¶ä¸­è¯»åå­¦çä¿¡æ¯ç»æä½
-    if ( (subject_b_file = fopen("subject.dat", "r+b")) != NULL) //å¦ææä»¶æå¼æå
+    FILE * subject_b_file;         
+    SUBJECT * subject_read = (SUBJECT *)malloc(sizeof(SUBJECT));        
+    if ( (subject_b_file = fopen("subject.dat", "r+b")) != NULL) 
     {
         while ( fread(subject_read, sizeof(SUBJECT), 1, subject_b_file) == 1)
-            if( strcmp(ID, (subject_read -> ID)) == 0)                                             //æ¯å¯¹å­¦çID,å¦æç¬¦ååè¾åºå­¦çä¿¡æ¯,å¹¶ä¸è¿åç»æä½
+            if( strcmp(ID, (subject_read -> ID)) == 0)                                             
             {
                 fprintf(stdout, "ID:%s NAME:%s NATURE:%s PERIOD:%d CREDIT:%d START:%d MAX_SELECTED:%d",
                                                                                             subject_read -> ID,
